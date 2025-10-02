@@ -1,4 +1,7 @@
 💜 Kahlol
+
+![image](https://iili.io/KV7lHf1.png)
+
 O Kahlol é um projeto que implementa mods ao Kahoot.
 Aqui você pode experimentar novas formas de jogar, novos recursos e ter diversão.
 
