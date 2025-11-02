@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerador de Comentários com IA</title>
+    <title>Gerador de Comentários</title>
     <style>
         * {
             margin: 0;
@@ -12,197 +12,149 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
             display: flex;
             justify-content: center;
             align-items: center;
+            min-height: 100vh;
             padding: 20px;
         }
 
         .container {
             background: white;
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 600px;
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 500px;
             width: 100%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         h1 {
-            color: #667eea;
             text-align: center;
-            margin-bottom: 30px;
-            font-size: 28px;
-        }
-
-        .input-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            color: #333;
+            font-size: 24px;
         }
 
         label {
             display: block;
             margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-        }
-
-        input, textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-
-        input:focus, textarea:focus {
-            outline: none;
-            border-color: #667eea;
+            color: #555;
+            font-size: 14px;
         }
 
         textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 15px;
+            font-family: Arial, sans-serif;
             resize: vertical;
-            min-height: 120px;
-            font-family: inherit;
+            min-height: 80px;
         }
 
-        .button-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
+        textarea:focus {
+            outline: none;
+            border-color: #666;
         }
 
         button {
-            flex: 1;
-            padding: 14px;
+            width: 100%;
+            padding: 12px;
             border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
+            border-radius: 5px;
+            font-size: 15px;
             cursor: pointer;
-            transition: all 0.3s;
+            margin-top: 15px;
         }
 
         .btn-generate {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #333;
             color: white;
         }
 
         .btn-generate:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            background: #555;
         }
 
         .btn-generate:disabled {
-            opacity: 0.6;
+            background: #ccc;
             cursor: not-allowed;
         }
 
         .btn-copy {
             background: #4CAF50;
             color: white;
+            display: none;
         }
 
-        .btn-copy:hover:not(:disabled) {
+        .btn-copy:hover {
             background: #45a049;
-            transform: translateY(-2px);
-        }
-
-        .btn-copy:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
         }
 
         .output-box {
-            background: #f5f5f5;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
             padding: 15px;
-            min-height: 120px;
-            margin-top: 20px;
+            margin-top: 15px;
+            min-height: 80px;
+            display: none;
             white-space: pre-wrap;
             word-wrap: break-word;
+            font-size: 14px;
+            line-height: 1.6;
         }
 
-        .loading {
+        .message {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
             text-align: center;
-            color: #667eea;
-            font-style: italic;
         }
 
         .error {
-            color: #f44336;
             background: #ffebee;
-            padding: 10px;
-            border-radius: 8px;
-            margin-top: 10px;
+            color: #c62828;
         }
 
         .success {
-            color: #4CAF50;
             background: #e8f5e9;
-            padding: 10px;
-            border-radius: 8px;
-            margin-top: 10px;
+            color: #2e7d32;
+        }
+
+        .loading {
+            color: #666;
             text-align: center;
-        }
-
-        .info-box {
-            background: #e3f2fd;
-            border-left: 4px solid #2196F3;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-
-        .info-box a {
-            color: #1976D2;
-            font-weight: 600;
+            font-style: italic;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🤖 Gerador de Comentários com IA</h1>
+        <h1>Gerador de Comentários</h1>
+
+        <label for="subject">Digite o assunto:</label>
+        <textarea id="subject" placeholder="Ex: tecnologia, culinária, viagens..."></textarea>
+
+        <button class="btn-generate" onclick="generateComment()">Gerar Comentário</button>
+
+        <div id="output" class="output-box"></div>
         
-        <div class="info-box">
-            <strong>💡 Como obter seu token gratuito:</strong><br>
-            1. Acesse <a href="https://console.groq.com" target="_blank">console.groq.com</a><br>
-            2. Crie uma conta gratuita<br>
-            3. Vá em "API Keys" no menu lateral<br>
-            4. Clique em "Create API Key"<br>
-            5. Cole o token no campo abaixo
-        </div>
-
-        <div class="input-group">
-            <label for="apiToken">🔑 Token da API Llama (Groq):</label>
-            <input type="password" id="apiToken" placeholder="Cole seu token aqui (ex: gsk_...)">
-        </div>
-
-        <div class="input-group">
-            <label for="subject">📝 Digite o assunto:</label>
-            <textarea id="subject" placeholder="Ex: tecnologia, culinária, viagens, etc."></textarea>
-        </div>
-
-        <div class="button-group">
-            <button class="btn-generate" onclick="generateComment()">✨ Gerar Comentário</button>
-        </div>
-
-        <div id="output" class="output-box" style="display:none;"></div>
-        
-        <button class="btn-copy" id="copyBtn" onclick="copyComment()" style="display:none; margin-top:10px; width:100%;">
-            📋 Copiar Comentário
-        </button>
+        <button class="btn-copy" id="copyBtn" onclick="copyComment()">Copiar</button>
 
         <div id="message"></div>
     </div>
 
     <script>
+        // 🔑 COLE SEU TOKEN AQUI ENTRE AS ASPAS:
+        const API_TOKEN = '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';
+
         async function generateComment() {
-            const token = document.getElementById('apiToken').value.trim();
+            const token = API_TOKEN;
             const subject = document.getElementById('subject').value.trim();
             const output = document.getElementById('output');
             const copyBtn = document.getElementById('copyBtn');
@@ -211,19 +163,19 @@
 
             message.innerHTML = '';
             
-            if (!token) {
-                message.innerHTML = '<div class="error">⚠️ Por favor, insira seu token da API!</div>';
+            if (!subject) {
+                message.innerHTML = '<div class="message error">Digite um assunto primeiro!</div>';
                 return;
             }
 
-            if (!subject) {
-                message.innerHTML = '<div class="error">⚠️ Por favor, digite um assunto!</div>';
+            if (!token || token === 'SEU_TOKEN_AQUI') {
+                message.innerHTML = '<div class="message error">Configure o token no código primeiro!</div>';
                 return;
             }
 
             generateBtn.disabled = true;
             output.style.display = 'block';
-            output.innerHTML = '<div class="loading">⏳ Gerando comentário...</div>';
+            output.innerHTML = '<div class="loading">Gerando...</div>';
             copyBtn.style.display = 'none';
 
             try {
@@ -257,7 +209,7 @@
             } catch (error) {
                 output.innerHTML = '';
                 output.style.display = 'none';
-                message.innerHTML = `<div class="error">❌ Erro: ${error.message}<br><br>Verifique se seu token está correto e ativo.</div>`;
+                message.innerHTML = `<div class="message error">Erro: ${error.message}</div>`;
             } finally {
                 generateBtn.disabled = false;
             }
@@ -269,16 +221,15 @@
             const text = output.textContent;
 
             navigator.clipboard.writeText(text).then(() => {
-                message.innerHTML = '<div class="success">✅ Comentário copiado com sucesso!</div>';
+                message.innerHTML = '<div class="message success">Copiado!</div>';
                 setTimeout(() => {
                     message.innerHTML = '';
-                }, 3000);
+                }, 2000);
             }).catch(err => {
-                message.innerHTML = '<div class="error">❌ Erro ao copiar</div>';
+                message.innerHTML = '<div class="message error">Erro ao copiar</div>';
             });
         }
 
-        // Permitir gerar com Enter
         document.getElementById('subject').addEventListener('keypress', function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
